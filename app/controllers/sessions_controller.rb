@@ -1,10 +1,12 @@
 class SessionsController < ApplicationController
+    # Allows user to login without being logged in 
+    # Expempting the login route from the before action
+    skip_before_action :authorize, only: [:login]
 
     def login 
         user = User.find_by(username: params[:username])
         if user&.authenticate(params[:password])
             session[:user_id] = user.id
-            binding.pry
             render json: user, status: :ok
         else
             render json: {error: 'Invalid Username or Password'}, status: :unauthorized
